@@ -12,6 +12,6 @@ openssl req -new -x509 -key tls.key -out tls.crt -days 365 \
 ```
 - Base64 Encode the tls.crt and tls.key and insert in templates/secret.yaml
 ```
-cat tls.crt | base64
-cat tls.key | base64
+cat tls.crt | base64 -w 0
+cat tls.key | base64 -w 0
 ```
