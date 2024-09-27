@@ -1,0 +1,16 @@
+image:
+  repository: nginx
+  tag: latest
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  enabled: true
+  type: NodePort
+  httpsPort: 443
+  httpsNodePort: 30443
+
+https:
+  enabled: true
+  tlsSecretName: "nginx-secret"

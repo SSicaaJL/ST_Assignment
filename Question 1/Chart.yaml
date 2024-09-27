@@ -1,0 +1,4 @@
+apiVersion: v2
+name: nginx-chart
+description: Helm chart for Nginx with HTTPS exposed through nodeport and with a self-signed certificate
+version: 1.0.0
