@@ -1,0 +1,52 @@
+---
+- name: Install Prometheus Node Exporter
+  hosts: ubuntu_vms
+  become: yes
+  vars:
+    # Specify version of node exporter to use 
+    node_exporter_version: "1.8.2"
+
+  tasks:
+    - name: Update and install required packages
+      apt:
+        update_cache: yes
+        # Install wget and tar if not already present
+        name:
+          - wget
+          - tar
+        state: present
+
+    - name: Download and extract Node Exporter Package
+      unarchive:
+        # Sample of download link:
+        # https://github.com/prometheus/node_exporter/releases/download/v1.8.2/node_exporter-1.8.2.darwin-amd64.tar.gz
+        src: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz"
+        dest: /usr/local/bin/
+        remote_src: yes
+        # Prevent extra subdirectory from being created
+        extra_opts: [--strip-components=1]
+
+    - name: Create systemd service file for Node Exporter
+      # Manage the Node Exporter as a service
+      # Create a node_exporter.service file with the following content
+      copy:
+        dest: /etc/systemd/system/node_exporter.service
+        content: |
+          [Unit]
+          Description=Node Exporter Service
+          After=network.target
+
+          [Service]
+          User=root
+          ExecStart=/usr/local/bin/node_exporter
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Start Node Exporter service
+      systemd:
+        name: node_exporter
+        # Ensure service is running
+        state: started
+        # Ensure service start automatically if system reboots
+        enabled: yes
